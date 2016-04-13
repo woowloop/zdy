@@ -93,9 +93,43 @@ public class UserInfoPanel : MonoBehaviour
         {
             avatar.mainTexture = (Texture2D)www.texture;
         }
+        else
+        {
+            StartCoroutine(LoadAvatar(url));
+        }
         //avatar .mainTexture = (Texture2D )www.texture;
     }
+    IEnumerator SwitchToCourse()
+    {
+        yield return new WaitForFixedUpdate();
+        if (CourseDetail.CourseType._Instance != null && CourseDetail.CourseType._Instance.IsInitOk)
+        {
+            MaskPanel.HideMask();
+            ZxingDraw._instance.DestroyCode();
 
+            List<CourseTypeInf> lsCT = new List<CourseTypeInf>();
+            lsCT.Clear();
+            CourseTypeInf ci2 = new CourseTypeInf();
+            ci2.nID = -1;
+            ci2.name = "今日计划";
+            lsCT.Add(ci2);
+            isCanGetInput = false;
+            UiManage.UIShowByPanel(UiManage._instance.selectCoursePannel, UiManage._instance.userInforPannel, 1, 1f);
+            foreach (var item in CourseDetail.CourseType._Instance.detail)
+            {
+                CourseDetail.CourseType.DetailType dt = item;
+                CourseTypeInf ci = new CourseTypeInf();
+                ci.nID = dt.id;
+                ci.name = dt.name;
+                lsCT.Add(ci);
+            }
+            SelectCoursePanel._instance.AddCourseToList(lsCT);
+        }
+        else
+        {
+            StartCoroutine(SwitchToCourse());
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -111,29 +145,8 @@ public class UserInfoPanel : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Joystick1Button0))
             {
                 MaskPanel.ShowMask();
-                if (CourseDetail.CourseType._Instance != null && CourseDetail.CourseType._Instance.IsInitOk)
-                {
-                    MaskPanel.HideMask();
-                    ZxingDraw._instance.DestroyCode();
-
-                    List<CourseTypeInf> lsCT = new List<CourseTypeInf>();
-                    lsCT.Clear();
-                    CourseTypeInf ci2 = new CourseTypeInf();
-                    ci2.nID = -1;
-                    ci2.name = "今日计划";
-                    lsCT.Add(ci2);
-                    isCanGetInput = false;
-                    UiManage.UIShowByPanel(UiManage._instance.selectCoursePannel, UiManage._instance.userInforPannel, 1, 1f);
-                    foreach (var item in CourseDetail.CourseType._Instance.detail)
-                    {
-                        CourseDetail.CourseType.DetailType dt = item;
-                        CourseTypeInf ci = new CourseTypeInf();
-                        ci.nID = dt.id;
-                        ci.name = dt.name;
-                        lsCT.Add(ci);
-                    }
-                    SelectCoursePanel._instance.AddCourseToList(lsCT);
-                }
+                isCanGetInput = false;
+                StartCoroutine(SwitchToCourse());
             }
         }
     }
