@@ -44,8 +44,7 @@ public class AddTexture : MonoBehaviour
     private TweenAlpha bigMovieAlpha;
     bool isShowBigPic = false;
 
-    List<ShowTexInf> lsHisTexInf = new List<ShowTexInf>();
-    List<ShowTexInf> curTexInf = new List<ShowTexInf>();
+    List<ShowTexInf> lsPicInf = new List<ShowTexInf>();
 
     private bool isHistoryView = false;
     int hisPicMaxIndex=1;
@@ -88,12 +87,12 @@ public class AddTexture : MonoBehaviour
     {
         HidebigTure();
 //        Debug.Log(nIndex+"::" + lsHisTexInf.Count);
-        if (nIndex<lsHisTexInf.Count)
+        if (nIndex < lsPicInf.Count)
         {
             if (dateLable && desLable && correctInfLable)
             {
-                dateLable.text = "日期:" + lsHisTexInf[nIndex].recordTime;
-                desLable.text ="课程:" + lsHisTexInf[nIndex].courseName +"\n共消耗卡路里:" + lsHisTexInf[nIndex].calorie+"\n错误:" + lsHisTexInf[nIndex].wrongCount + "个";
+                dateLable.text = "日期:" + lsPicInf[nIndex].recordTime;
+                desLable.text = "课程:" + lsPicInf[nIndex].courseName + "\n共消耗卡路里:" + lsPicInf[nIndex].calorie + "\n错误:" + lsPicInf[nIndex].wrongCount + "个";
             }
         }
         if (tr1 != null)
@@ -128,11 +127,11 @@ public class AddTexture : MonoBehaviour
         else
             lsPicArr = Scoring_Tony1._instance.picArr;*/
 
-        if (index<lsHisTexInf.Count&&gameObject.activeSelf)
+        if (index < lsPicInf.Count && gameObject.activeSelf)
         {
             pannal.SetActive(true);
-            textureBigUser.mainTexture = lsHisTexInf[index].moviePic;
-            textureBigMovie.mainTexture = lsHisTexInf[index].userPic;
+            textureBigUser.mainTexture = lsPicInf[index].moviePic;
+            textureBigMovie.mainTexture = lsPicInf[index].userPic;
         }
      /*   if (lsPicArr != null && lsPicArr.Length == 2)
         {
@@ -193,7 +192,7 @@ public class AddTexture : MonoBehaviour
     public void InitLabelHisPic()
     {
         thispannal.PlayForward();
-        for (int a = 0; a < lsHisTexInf.Count; a++)
+        for (int a = 0; a < lsPicInf.Count; a++)
         {
             if (a < 5)
             {
@@ -201,7 +200,7 @@ public class AddTexture : MonoBehaviour
                 label2[a].SetActive(true);
             }
         }
-        for (int i = lsHisTexInf.Count; i < 5; i++)
+        for (int i = lsPicInf.Count; i < 5; i++)
         {
             label1[i].SetActive(false);
             label2[i].SetActive(false);
@@ -228,13 +227,7 @@ public class AddTexture : MonoBehaviour
             }
             else
             {
-                lsHisTexInf.Clear();
-                MaskPanel.HideMask();
-                StopAllCoroutines();
-                HidebigTure();
-                ClearCameraList();
-                thispannal.PlayReverse();
-                StartCoroutine(DelaySet());
+                ClearAndExit();
             }
         }
     }
@@ -249,7 +242,7 @@ public class AddTexture : MonoBehaviour
         yield return new WaitForSeconds(0.6f);
         go.SetActive(false);
     }
-    void ClearCameraList()
+    public void ClearAndExit()
     {
         List<GameObject> lst = new List<GameObject>();
         for (int i = 0; i < picListGrid.transform.childCount; i++)
@@ -262,17 +255,12 @@ public class AddTexture : MonoBehaviour
         }
         lst.Clear();
         picListGrid.transform.DetachChildren();
-    }
-    public void OnDetailsChoose()
-    {
-        if (autoSelectInf)
-        {
-            autoSelectInf.Init();
-        }
+        lsPicInf.Clear();
+        MaskPanel.HideMask();
+        StopAllCoroutines();
         HidebigTure();
-        isHistoryView = false;
-        invisible();
-        thispannal.PlayForward();
+        thispannal.PlayReverse();
+        StartCoroutine(DelaySet());
     }
     IEnumerator LoopLoadHisPic(int nPage)
     {
@@ -346,10 +334,10 @@ public class AddTexture : MonoBehaviour
                                         UILabel lab = obj.transform.FindChild("NumLabel").GetComponent<UILabel>();
                                         uiUserPic.mainTexture = sti.userPic;
                                         uiMoviePic.mainTexture = sti.moviePic;
-                                        lsHisTexInf.Add(sti);
+                                        lsPicInf.Add(sti);
 
-                                        lab.text = (lsHisTexInf.Count + 1).ToString("000");
-                                        obj.name = lsHisTexInf.Count.ToString("000");
+                                        lab.text = (lsPicInf.Count + 1).ToString("000");
+                                        obj.name = lsPicInf.Count.ToString("000");
                                         uiGridForPicList.repositionNow = true; 
                                         UiManage.ShadeColorForUITex(uiUserPic);
                                         UiManage.ShadeColorForUITex(uiMoviePic);
@@ -383,32 +371,31 @@ public class AddTexture : MonoBehaviour
         {
             autoSelectInf.Init();
         }
-        lsHisTexInf.Clear();
-        HidebigTure();
-        isHistoryView = true;
-        thispannal.PlayForward();
-        MaskPanel.ShowMask();
+        lsPicInf.Clear();
         hisPicIndex = 1;
         hisPicMaxIndex = 1;
+        isHistoryView = true;
+        HidebigTure();
+        thispannal.PlayForward();
+        MaskPanel.ShowMask();
         myCRForLoopLoadHisPic=StartCoroutine(LoopLoadHisPic(hisPicIndex));
         InitLabelHisPic();
-
-        /*
-                isHistoryView = true;
-                thispannal.PlayForward();
-                if (HistoryPicture._instance.userPicNum > 0 &&
-                    HistoryPicture._instance.moviePicNumZ > 0 &&
-                    (HistoryPicture._instance.lsHisPicArr[(int)_EPISORT.USER].Count >= HistoryPicture._instance.userPicNum - 2) &&
-                    (HistoryPicture._instance.lsHisPicArr[(int)_EPISORT.MOVIE].Count >= HistoryPicture._instance.moviePicNumZ - 2))
-                {
-                    invisibleHisPic();
-                }
-                else
-                {
-        //             Debug.Log(HistoryPicture._instance.userPicNum + ":::" + HistoryPicture._instance.lsHisPicArr[(int)_EPISORT.USER].Count);
-        //             Debug.Log(HistoryPicture._instance.moviePicNumZ + ":::" + HistoryPicture._instance.lsHisPicArr[(int)_EPISORT.MOVIE].Count);
-        //             Debug.Log("Loading");
-                }*/
+    }
+    public void OnDetailsChoose()
+    {
+        CurveScore._instance.isCanEsc = false;
+        if (autoSelectInf)
+        {
+            autoSelectInf.Init();
+        }
+        lsPicInf.Clear();
+        hisPicIndex = 1;
+        hisPicMaxIndex = 1;
+        isHistoryView = false;
+        HidebigTure();
+        LoadCurPic();
+        //invisible();
+        thispannal.PlayForward();
     }
     void LoadCurPic()
     {
@@ -426,9 +413,15 @@ public class AddTexture : MonoBehaviour
                 uiMoviePic.mainTexture = Scoring_Tony1._instance.picArr[(int)_EPISORT.MOVIE][i];
                 picListGrid.GetComponent<UIGrid>().repositionNow = true;
 
-
                 ShowTexInf sti = new ShowTexInf();
-                lsHisTexInf.Add(sti);
+                sti.completeCount = 1;
+                sti.recordTime = QRlogin.CurTime;
+                sti.wrongCount = Scoring_Tony1._instance.num1 + Scoring_Tony1._instance.num2 + Scoring_Tony1._instance.num3 + Scoring_Tony1._instance.num4 + Scoring_Tony1._instance.num5;
+                sti.nIndex = i;
+                sti.courseName = Scoring_Tony1._instance.curMovieName;
+                sti.userPic = Scoring_Tony1._instance.picArr[(int)_EPISORT.USER][i];
+                sti.moviePic = Scoring_Tony1._instance.picArr[(int)_EPISORT.MOVIE][i];
+                lsPicInf.Add(sti);
                /* sti.calorie = calorie;
                 sti.completeCount = completeCount;
                 sti.recordTime = recordTime;
@@ -440,7 +433,7 @@ public class AddTexture : MonoBehaviour
             }
         }
     }
-    void invisible()
+    /*void invisible()
     {
         if (towPicShowPre && picListGrid && Scoring_Tony1._instance.picArr[(int)_EPISORT.USER].Count == Scoring_Tony1._instance.picArr[(int)_EPISORT.MOVIE].Count)
         {
@@ -457,7 +450,7 @@ public class AddTexture : MonoBehaviour
             }
             picListGrid.GetComponent<UIGrid>().repositionNow = true;
         }
-    }
+    }*/
    /* void invisibleHisPic()
     {
         //Debug.Log("ent hispic " + HistoryPicture._instance.lsHisPicArr[(int)_EPISORT.USER].Count);

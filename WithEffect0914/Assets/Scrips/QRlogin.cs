@@ -47,6 +47,13 @@ public class QRlogin : MonoBehaviour
             localPicPath = Application.persistentDataPath + "/" + QRlogin._instance.user.id + "/" + System.DateTime.Now.Year.ToString() + "-" + System.DateTime.Now.Month.ToString() + "-" + System.DateTime.Now.Day.ToString() + " " + System.DateTime.Now.Hour + "-" + System.DateTime.Now.Minute + "-" + System.DateTime.Now.Second;
         }
     }
+    public static string CurTime
+    {
+        get
+        {
+            return System.DateTime.Now.Year.ToString() + "-" + System.DateTime.Now.Month.ToString() + "-" + System.DateTime.Now.Day.ToString() + " " + System.DateTime.Now.Hour + "-" + System.DateTime.Now.Minute + "-" + System.DateTime.Now.Second;
+        }
+    }
 
     public delegate void LoginSucceed();
     public event LoginSucceed OnLoginSucceed;

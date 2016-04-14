@@ -77,6 +77,16 @@ public class TestMobileTexture : MonoBehaviour
                 return 3;
             }
         }
+        public string movieName
+        {
+            get
+            {
+                if (_instance && _instance.m_movieTexture)
+                    return _instance.movieName;
+                else
+                    return "";
+            }
+        }
     }
 
     public bool isbegin;
@@ -94,6 +104,7 @@ public class TestMobileTexture : MonoBehaviour
     public delegate void MoviePlayStart();
     public event MoviePlayFinsh OnMoviePlayStart;
 
+    string movieName;
     //private Queue<Texture2D> textureQ = new Queue<Texture2D>();
     //private Thread thrGenerateTex=null;
     Rect rect;
@@ -282,6 +293,8 @@ public class TestMobileTexture : MonoBehaviour
     //播放视频的方法
     public void AutoPlayVideo(ShowMovieInfo smi)
     {
+        movieName = smi.coursename;
+        Scoring_Tony1._instance.curMovieName = smi.coursename;
         m_movieTexture.AbsolutePath = smi.isAbsolutePath;
         m_movieTexture.LoopCount = 0;
         m_movieTexture.Path = smi.videourl;

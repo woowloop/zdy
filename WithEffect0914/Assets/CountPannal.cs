@@ -45,7 +45,7 @@ public class CountPannal : MonoBehaviour {
 
 		//Init ();
 	}
-	void ClosePannal()
+	public void ClosePannal()
 	{
 		countpannal .PlayReverse ();
 		misscor .Clear ();

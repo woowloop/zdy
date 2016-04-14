@@ -121,6 +121,10 @@ public class Scoring_Tony1 : MonoBehaviour
     public Transform torso;
     public bool canplay;
     public bool ismiss;
+    public string curMovieName="";//在TestMovileTexture中赋值
+
+
+
     private float misstimer = 0.2f;
     private float misstime = 0.2f;
     MissPic missPic;
